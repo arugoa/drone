@@ -11,7 +11,7 @@ Cells = 3
 TotalVoltage = 11.1 # Conservative Estimate
 
 # Motor Stats
-MotorKV = 1100 #
+MotorKV = 1100
 InternalResistance = 0.192 # Ohms
 PeakCurrent = 9.9 # Amps
 
