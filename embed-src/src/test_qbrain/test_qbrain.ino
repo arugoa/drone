@@ -1,3 +1,4 @@
+// #include "main.h"
 #include <Servo.h>
 
 Servo escFL;
@@ -9,6 +10,7 @@ Servo escRL;
 #define ESC_MAX 2000
 
 void setup() {
+  Serial.begin(115200);
   escFL.attach(3);
   escFR.attach(5);
   escRR.attach(6);
@@ -31,5 +33,6 @@ void loop() {
   escRR.writeMicroseconds(throttle);
   escRL.writeMicroseconds(throttle);
 
-  delay(20);  // 50 Hz
+  //delay(20); // 50Hz
+  Serial.println("Loop Ran");
 }

@@ -4,6 +4,14 @@ import math
 
 TWR = 2 # Thrust to Weight Ratio [1.5,2]
 
+# Masses (in grams)
+ChassisMass = 274
+ESCMass = 26
+MotorAssemblyMass = 52
+ArduinoMass = 18
+BatteryMass = 140
+
+
 # Battery
 MaxCellV = 4.2
 Cells = 3
