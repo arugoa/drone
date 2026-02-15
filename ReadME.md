@@ -2,9 +2,9 @@
 
 ### Flight Demonstration
 <p align="center">
-  <video src="./assets/IMG_2660.mov" width="100%" controls>
-  </video>
-  <br>
+<video src="./assets/IMG_2660.mp4" width="100%" controls>
+</video>
+<br>
 </p>
 
 ---
