@@ -1,7 +1,11 @@
 # PROJECT: DRONE
 
 ### Flight Demonstration
-[![Watch the Video](./assets/Thumbnail.png)](./assets/IMG_2660.mp4)
+<a href="https://youtube.com/shorts/AijTxv9Hs1Q" target="_blank">
+  <img src="./assets/Thumbnail.png" width="300" height="200" alt="Watch the Drone Video">
+  <caption align="center"> <em>Click to watch the drone flight demonstration</em></caption>
+</a>
+
 ---
 
 ## Software
