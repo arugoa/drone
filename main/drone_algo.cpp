@@ -64,8 +64,8 @@ void Drone::fly(float throttle, float pitch, float yaw, float roll)
 
     // need to put PID into all of these
     int fl_micros = 1000 + (throttle + deltapitch + deltayaw + deltaroll)*THROTTLE_SENS;        // cw
-    int fr_micros = -1000 -(throttle + deltapitch - deltayaw - deltaroll)*THROTTLE_SENS;        // ccw
-    int bl_micros = -1000 -(throttle - deltapitch - deltayaw + deltaroll)*THROTTLE_SENS;        // ccw
+    int fr_micros = 1000 + (throttle + deltapitch - deltayaw - deltaroll)*THROTTLE_SENS;        // ccw
+    int bl_micros = 1000 + (throttle - deltapitch - deltayaw + deltaroll)*THROTTLE_SENS;        // ccw
     int br_micros = 1000 + (throttle - deltapitch + deltayaw - deltaroll)*THROTTLE_SENS;        // cw
 
     front_left.writeMicroseconds(fl_micros);
