@@ -1,12 +1,7 @@
 # PROJECT: DRONE
 
 ### Flight Demonstration
-<p align="center">
-<video src="./assets/IMG_2660.mp4" width="100%" controls>
-</video>
-<br>
-</p>
-
+[![Watch the Video](./assets/Thumbnail.png)](./assets/IMG_2660.mp4)
 ---
 
 ## Software
@@ -61,6 +56,7 @@ Where:
 * $\omega$: Propeller angular velocity [revs/s]
 * $D$: Propeller diameter [m]
 
+> [!NOTE]
 > Please refer to `DroneSetup.py` for specific aerodynamic calculations and theoretical drone parameters. (This will be further expanded on later).
 
 ---
