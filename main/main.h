@@ -1,10 +1,12 @@
-#include "./algorithms/drone_algo.h"
-#include <Servo.h>
+#include "./drone_algo.h"
 
-Servo escFL;
-Servo escFR;
-Servo escRR;
-Servo escRL;
+// Servo escFL;
+// Servo escFR;
+// Servo escRL;
+// Servo escRR;
 
-#define ESC_MIN 1000
-#define ESC_MAX 2000
+// Adafruit_BNO055 bno = Adafruit_BNO055(55);
+
+Drone::config cfg = {3, 5, 9, 6};
+
+Drone drone_;

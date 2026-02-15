@@ -21,6 +21,16 @@ PID::PID(float kP, float kI, float kD, float integralCap, float outputCap)
     this->outputCap = outputCap;
 }
 
+PID::PID(config cfg)
+{
+    this->kP = cfg.p;
+    this->kI = cfg.i;
+    this->kD = cfg.d;
+    this->integralCap = cfg.integralCap;
+    this->outputCap = cfg.outCap;
+}
+
+
 void PID::setPID(float kP, float kI, float kD, float integralCap, float outputCap)
 {
     this->kP = kP;
