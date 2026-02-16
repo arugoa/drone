@@ -1,22 +1,23 @@
 #include "main.h"
 
 void setup() {
-  Serial.begin(115200);
+  // Serial.begin(9600);
+  controller.begin();
   drone_.setup(cfg);
-  
-  // escFL.attach(3);
-  // escFR.attach(5);
-  // escRR.attach(6);
-  // escRL.attach(9);
+  prev_time = millis()/1000;
+
+  pitch = drone_.curr_pitch();
+  yaw = drone_.curr_yaw();
+  roll = drone_.curr_roll();
+
 }
 
-float throttle = 0;
-float yaw = 0;
-float pitch = 0;
-float roll = 0;
-
 void loop() {
-  // sensors_event_t event;
+  unsigned long dt = millis()/1000 - prev_time;
+  prev_time = millis()/1000;
+  drone_.updateIMU();
+  controller.update();
+
   if (Serial.available()) {
     String input = Serial.readStringUntil('\n');
     input.trim();
@@ -26,25 +27,39 @@ void loop() {
       throttle = input.substring(1).toFloat();
     } 
     else if (armID == 'Y') {
-      yaw = input.substring(1).toFloat();
+      yaw += input.substring(1).toFloat();
     }
     else if (armID == 'P') {
-      pitch = input.substring(1).toFloat();
+      pitch += input.substring(1).toFloat();
     }
     else if (armID = 'R') {
-      roll = input.substring(1).toFloat();
+      roll += input.substring(1).toFloat();
     }
-  } 
+  }
 
-  drone_.fly(throttle, pitch, yaw, roll);
+  // Serial.print(controller.getThrottle());
+  // Serial.print(" ");
+  // Serial.print(controller.getYaw() * 180);
+  // Serial.print(" ");
+  // Serial.print(controller.getPitch() * 180);
+  // Serial.print(" ");
+  // Serial.print(controller.getRoll() * 180);
+  // Serial.println();
 
-  // int throttle = 1200;
+  pitch = clamp(pitch, -180, 180);
+  yaw = clamp(yaw, -180, 180);
+  roll = clamp(roll, -180, 180);
 
-  // escFL.writeMicroseconds(throttle);
-  // escFR.writeMicroseconds(throttle);
-  // escRR.writeMicroseconds(throttle);
-  // escRL.writeMicroseconds(throttle);
+  // drone_.fly(throttle, pitch, yaw, roll, dt);
 
-  delay(20); // 50Hz
-  Serial.println("Loop Ran");
+  delay(20);
+  // Serial.println("Loop Ran");
+  // Serial.print("p: ");
+  // Serial.print(pitch);
+
+  // Serial.print(", y: ");
+  // Serial.print(yaw);
+
+  // Serial.print(", r: ");
+  // Serial.println(roll);
 }

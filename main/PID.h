@@ -38,12 +38,12 @@ private:
     float kI = 0;
     float kD = 0;
 
-    double integralCap = 0;
-    double derivativeCap = 0;
+    float integralCap = 0;
+    float derivativeCap = 0;
     float outputCap = 0;
 
     float lastError = 0;
-    double errorIntegral = 0;
+    float errorIntegral = 0;
 
 public:
 
@@ -54,6 +54,9 @@ public:
         float d = 0;
         float outCap = 15000;
         float integralCap = 500;
+
+        config(float _p, float _i, float _d, float _outCap, float _intCap)
+        : p(_p), i(_i), d(_d), outCap(_outCap), integralCap(_intCap) {}
     };
 
 
@@ -101,13 +104,13 @@ public:
      * @param dt The time that has passed since the last calculation, in milliseconds
      * @return The output control power
      */
-    int calculate(int desired, int current, double dt);
+    float calculate(float desired, float current, float dt);
 
-    int calculatePeriodic(float error, double dt);
+    float calculatePeriodic(float error, float dt);
 
-    void limitOutput(double &PIDCalc) const;
+    void limitOutput(float &PIDCalc) const;
 
-    double limitErrorDerivative(double dTerm);
+    float limitErrorDerivative(float dTerm);
 
     void limitErrorIntegral();
 

@@ -7,9 +7,13 @@
 
 #define ESC_MIN 1000
 #define ESC_MAX 2000
+
+#define clamp(amt, low, high)                                              \
+  ((amt) < (low) ? (amt+2*high) : ((amt) > (high) ? (amt-2*high) : (amt)))
+
 // Find out what this is supposed to be
 constexpr float MAX_THROTTLE = 2000;
-constexpr float THROTTLE_SENS = 100;
+constexpr float THROTTLE_SENS = 10;
 
 class Drone
 {
@@ -21,32 +25,38 @@ public:
         int bl;
         int br;
 
-        // Adafruit_BNO055 imu;
+        Adafruit_BNO055 imu;
     };
 
     Drone();
 
     void setup(config cfg);
 
-    void fly(float throttle, float pitch, float yaw, float roll);
+    void updateIMU();
 
-    float curr_yaw(sensors_event_t event);
+    void fly(float throttle, float pitch, float yaw, float roll, unsigned long dt);
 
-    float curr_pitch(sensors_event_t event);
+    float curr_yaw();
 
-    float curr_roll(sensors_event_t event);
+    float curr_pitch();
 
+    float curr_roll();
+    
 private:
     Servo front_left;
     Servo front_right;
     Servo back_left;
     Servo back_right;
-
-    // Adafruit_BNO055 imu;
+    
+    Adafruit_BNO055 imu;
+    sensors_event_t event;
 
     PID pitchPID;
     PID yawPID;
     PID rollPID;
 
-    float dt;
+    PID flPID;
+    PID frPID;
+    PID blPID;
+    PID brPID;
 };
