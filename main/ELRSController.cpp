@@ -1,10 +1,12 @@
 #include "ELRSController.h"
 
 ELRSController::ELRSController(int rx, int tx) : elrsSerial(rx, tx), crsf() {
-    throttle = 0;
-    yaw = 0;
-    pitch = 0;
-    roll = 0;
+    // throttle = 0;
+    // yaw = 0;
+    // pitch = 0;
+    // roll = 0;
+    left_switch = Switch::MID;
+    right_switch = Switch::MID;
 }
 
 void ELRSController::begin() {
@@ -15,10 +17,10 @@ void ELRSController::begin() {
 void ELRSController::update() {
     crsf.update();
 
-    yaw = (crsf.getChannel(YAW_CHANNEL) - CHANNEL_MID) / CHANNEL_RANGE;
-    pitch = (crsf.getChannel(PITCH_CHANNEL) - CHANNEL_MID) / CHANNEL_RANGE;
-    roll = (crsf.getChannel(ROLL_CHANNEL) - CHANNEL_MID) / CHANNEL_RANGE;
-    throttle = (crsf.getChannel(THROTTLE_CHANNEL) - CHANNEL_MIN) / CHANNEL_RANGE;
+    // yaw = (crsf.getChannel(YAW_CHANNEL) - CHANNEL_MID) / CHANNEL_RANGE;
+    // pitch = (crsf.getChannel(PITCH_CHANNEL) - CHANNEL_MID) / CHANNEL_RANGE;
+    // roll = (crsf.getChannel(ROLL_CHANNEL) - CHANNEL_MID) / CHANNEL_RANGE;
+    // throttle = (crsf.getChannel(THROTTLE_CHANNEL) - CHANNEL_MIN) / CHANNEL_RANGE;
 
     if (crsf.getChannel(LEFT_BUTTON_CHANNEL) > CHANNEL_MID) {
         left_button = true;
@@ -52,19 +54,19 @@ void ELRSController::update() {
 }
 
 float ELRSController::getThrottle() {
-    return throttle;
+    return ((crsf.getChannel(THROTTLE_CHANNEL) - CHANNEL_MIN) / CHANNEL_RANGE);
 }
 
 float ELRSController::getYaw() {
-    return yaw * 180;
+    return ((crsf.getChannel(YAW_CHANNEL) - CHANNEL_MID) / CHANNEL_RANGE) * 180;
 }
 
 float ELRSController::getPitch() {
-    return pitch *15;
+    return ((crsf.getChannel(PITCH_CHANNEL) - CHANNEL_MID) / CHANNEL_RANGE) *15;
 }
 
 float ELRSController::getRoll() {
-    return roll * 15;
+    return ((crsf.getChannel(ROLL_CHANNEL) - CHANNEL_MID) / CHANNEL_RANGE) * 15;
 }
 
 bool ELRSController::getLeftButton() {

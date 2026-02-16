@@ -11,10 +11,10 @@ constexpr int RIGHT_BUTTON_CHANNEL = 8;
 constexpr int LEFT_SWITCH_CHANNEL = 6;
 constexpr int RIGHT_SWITCH_CHANNEL = 7;
 
-constexpr int CHANNEL_MIN = 990;
-constexpr int CHANNEL_MAX = 2011;
-constexpr int CHANNEL_RANGE = CHANNEL_MAX - CHANNEL_MIN;
-constexpr int CHANNEL_MID = 1500;
+constexpr float CHANNEL_MIN = 990;
+constexpr float CHANNEL_MAX = 2011;
+constexpr float CHANNEL_RANGE = CHANNEL_MAX - CHANNEL_MIN;
+constexpr float CHANNEL_MID = 1500;
 
 enum Switch {UP, MID, DOWN};
 
@@ -38,15 +38,10 @@ class ELRSController {
     private:
         SoftwareSerial elrsSerial;
         AlfredoCRSF crsf;
-
-        float throttle;
-        float yaw;
-        float pitch;
-        float roll;
         
         bool left_button;
         bool right_button;
 
         Switch left_switch;
         Switch right_switch;
-}
+};

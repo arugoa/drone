@@ -30,37 +30,9 @@ PID::PID(config cfg)
     this->outputCap = cfg.outCap;
 }
 
-
-void PID::setPID(float kP, float kI, float kD, float integralCap, float outputCap)
-{
-    this->kP = kP;
-    this->kI = kI;
-    this->kD = kD;
-    this->integralCap = integralCap;
-    this->outputCap = outputCap;
-}
-
-void PID::resetPID(float kP, float kI, float kD, float integralCap, float outputCap)
-{
-    this->kP = kP;
-    this->kI = kI;
-    this->kD = kD;
-    this->integralCap = integralCap;
-    this->outputCap = outputCap;
-
-    lastError = 0;
-    errorIntegral = 0;
-}
-
-void PID::resetErrorIntegral()
-{
-    lastError = 0;
-    errorIntegral = 0;
-}
-
 float PID::calculate(float desired, float current, float dt)
 {
-    float error = static_cast<float>(desired - current);
+    float error = desired - current;
     return calculatePeriodic(error, dt);
 }
 
@@ -83,7 +55,7 @@ float PID::calculatePeriodic(float error, float dt)
 
     lastError = error;
     limitOutput(PIDCalc);
-    return static_cast<int>(PIDCalc);
+    return PIDCalc;
 }
 
 void PID::limitErrorIntegral()

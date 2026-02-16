@@ -1,33 +1,5 @@
 #define lastX 10
 
-struct lastfew {
-    long long last[lastX] = { 0 };
-    int arm = 0;
-    int lastY = 1;
-
-    lastfew(int lastY_ = 1) {
-        if(lastY_ > lastX){
-            lastY = lastX;
-        }else{
-            lastY = lastY_;
-        }
-    }
-
-    void add(long long l) {
-        last[arm] = l;
-        arm++;
-        if (arm == lastY)
-            arm = 0;
-    }
-
-    long long time() {
-        long long t = 0;
-        for (int i = 0; i < lastY; i++)
-            t += last[i];
-        return t / lastY;
-    }
-};
-
 /**
  * The PID class is used to implement PID (proportional, integral, derivative) control of a motor. It is used by almost every
  * motor on the robot, and supports both position and velocity control.
@@ -64,8 +36,6 @@ public:
 
     float pC, iC, dC = 0;
 
-    lastfew dBuffer;
-
     /**
      * Creates a new PID object with the default control parameters
      */
@@ -82,18 +52,6 @@ public:
     PID(float kP, float kI, float kD, float integralCap = 0, float outputCap = 0);
 
     PID(config cfg);
-
-    /**
-     * Sets the P, I, and D control parameters
-     * @param p The new P (proportional) parameter
-     * @param i The new I (integral) parameter
-     * @param d The new D (derivative) parameter
-     */
-    void setPID(float p, float i, float d, float integralCap = 0, float outputCap = 0);
-
-    void resetPID(float kP, float kI, float kD, float integralCap = 0, float outputCap = 0);
-
-    void resetErrorIntegral();
 
 
     /**

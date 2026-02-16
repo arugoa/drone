@@ -17,30 +17,27 @@ void loop() {
   drone_.updateIMU();
   controller.update();
 
-  if (Serial.available()) {
-    String input = Serial.readStringUntil('\n');
-    input.trim();
-    char armID = input.charAt(0);
+  if (controller.getLeftSwitch() == Switch::UP) {
+    throttle = controller.getThrottle()*100;
+    yaw = controller.getYaw();
+    pitch = controller.getPitch();
+    roll = controller.getRoll();
+    // Serial.println("FLYING");
 
-    if (armID == 'T') {
-      throttle = input.substring(1).toFloat();
-    } 
-    else if (armID == 'Y') {
-      yaw += input.substring(1).toFloat();
-    }
-    else if (armID == 'P') {
-      pitch += input.substring(1).toFloat();
-    }
-    else if (armID == 'R') {
-      roll += input.substring(1).toFloat();
-    }
+    pitch = clamp(pitch, -180, 180);
+    yaw = clamp(yaw, -180, 180);
+    roll = clamp(roll, -180, 180);
+
+    drone_.fly(throttle, pitch, yaw, roll, dt);
+  } 
+  else if (controller.getLeftSwitch() == Switch::DOWN) {
+    // Idk what to put here
+  }
+  else {
+    throttle = 0;
+    drone_.nofly();
+    // Serial.println("NOT FLYING");
   }
 
-  pitch = clamp(pitch, -180, 180);
-  yaw = clamp(yaw, -180, 180);
-  roll = clamp(roll, -180, 180);
-
-  // drone_.fly(throttle, pitch, yaw, roll, dt);
-
-  delay(20);
+  delay(10); // 100hz
 }

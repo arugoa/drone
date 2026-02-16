@@ -24,8 +24,7 @@ public:
         int fr;
         int bl;
         int br;
-
-        Adafruit_BNO055 imu;
+        int imu;
     };
 
     Drone();
@@ -35,6 +34,8 @@ public:
     void updateIMU();
 
     void fly(float throttle, float pitch, float yaw, float roll, unsigned long dt);
+
+    void nofly();
 
     float curr_yaw();
 
