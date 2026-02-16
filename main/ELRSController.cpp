@@ -1,47 +1,84 @@
 #include "ELRSController.h"
 
-#define XAXIS_CHANNEL 3
-#define YAXIS_CHANNEL 2
-#define RX_CHANNEL 0
-#define RY_CHANNEL 1
-
-#define MIN_SIGNAL 190
-#define MAX_SIGNAL 1790
+ELRSController::ELRSController(int rx, int tx) : elrsSerial(rx, tx), crsf() {
+    throttle = 0;
+    yaw = 0;
+    pitch = 0;
+    roll = 0;
+}
 
 void ELRSController::begin() {
-    sBus.begin();
+    elrsSerial.begin(115200);
+    crsf.begin(elrsSerial);
 }
 
 void ELRSController::update() {
-    sBus.FeedLine();
+    crsf.update();
 
-    if (sBus.toChannels == 1) {
-        sBus.UpdateChannels();
-        sBus.toChannels = 0;
+    yaw = (crsf.getChannel(YAW_CHANNEL) - CHANNEL_MID) / CHANNEL_RANGE;
+    pitch = (crsf.getChannel(PITCH_CHANNEL) - CHANNEL_MID) / CHANNEL_RANGE;
+    roll = (crsf.getChannel(ROLL_CHANNEL) - CHANNEL_MID) / CHANNEL_RANGE;
+    throttle = (crsf.getChannel(THROTTLE_CHANNEL) - CHANNEL_MIN) / CHANNEL_RANGE;
 
-        updateTrackers();
+    if (crsf.getChannel(LEFT_BUTTON_CHANNEL) > CHANNEL_MID) {
+        left_button = true;
+    } else {
+        left_button = false;
+    }
+
+    if (crsf.getChannel(RIGHT_BUTTON_CHANNEL) > CHANNEL_MID) {
+        right_button = true;
+    } else {
+        right_button = false;
+    }
+
+    int left_switch_val = crsf.getChannel(LEFT_SWITCH_CHANNEL);
+    if (left_switch_val == 1000) {
+        left_switch = Switch::DOWN;
+    } else if (left_switch_val == 1503) {
+        left_switch = Switch::MID;
+    } else if (left_switch_val == 2000) {
+        left_switch = Switch::UP;
+    }
+
+    int right_switch_val = crsf.getChannel(RIGHT_SWITCH_CHANNEL);
+    if (right_switch_val == 1000) {
+        right_switch = Switch::DOWN;
+    } else if (right_switch_val == 1503) {
+        right_switch = Switch::MID;
+    } else if (right_switch_val == 2000) {
+        right_switch = Switch::UP;
     }
 }
 
-void ELRSController::updateTrackers() {
-    xAxis.add(sBus.channels[XAXIS_CHANNEL]);
-    yAxis.add(sBus.channels[YAXIS_CHANNEL]);
-    rxAxis.add(sBus.channels[RX_CHANNEL]);
-    ryAxis.add(sBus.channels[RY_CHANNEL]);
-}
-
 float ELRSController::getThrottle() {
-    return (float)xAxis.get_estimated() / MAX_SIGNAL;
-}
-
-float ELRSController::getRoll() {
-    return (float)rxAxis.get_estimated() / MAX_SIGNAL;
-}
-
-float ELRSController::getPitch() {
-    return (float)yAxis.get_estimated() / MAX_SIGNAL;
+    return throttle;
 }
 
 float ELRSController::getYaw() {
-    return (float)ryAxis.get_estimated() / MAX_SIGNAL;
+    return yaw * 180;
+}
+
+float ELRSController::getPitch() {
+    return pitch *15;
+}
+
+float ELRSController::getRoll() {
+    return roll * 15;
+}
+
+bool ELRSController::getLeftButton() {
+    return left_button;
+}
+
+bool ELRSController::getRightButton() {
+    return right_button;
+}
+
+Switch ELRSController::getLeftSwitch() {
+    return left_switch;
+}
+
+Switch ELRSController::getRightSwitch() {
+    return right_switch;
 }
