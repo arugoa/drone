@@ -1,9 +1,16 @@
 # PROJECT: DRONE
 
 ### Flight Demonstration
-<a href="https://youtube.com/shorts/AijTxv9Hs1Q" target="_blank">
-  <img src="./assets/Thumbnail.png" width="300" height="200" alt="Watch the Drone Video">
-  <caption align="center"> <em>Click to watch the drone flight demonstration</em></caption>
+<a href="https://youtube.com/shorts/0YHDy_s_eys" target="_blank" rel="noopener noreferrer" class="video-link">
+  <figure class="video-container">
+    <div class="image-wrapper">
+      <img src="./assets/Thumbnail.png" alt="Watch the Drone Video">
+      <div class="play-overlay">
+        <span class="play-icon">▶</span>
+      </div>
+    </div>
+    <figcaption>Click to watch the drone flight demonstration</figcaption>
+  </figure>
 </a>
 
 ---
