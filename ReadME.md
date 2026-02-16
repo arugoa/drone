@@ -6,7 +6,6 @@
     <div class="image-wrapper">
       <img src="./assets/Thumbnail.png" alt="Watch the Drone Video">
       <div class="play-overlay">
-        <span class="play-icon">▶</span>
       </div>
     </div>
     <figcaption>Click to watch the drone flight demonstration</figcaption>
