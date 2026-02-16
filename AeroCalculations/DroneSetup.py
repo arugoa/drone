@@ -39,7 +39,8 @@ MaxTotalThrust = MaxThrustPerMotor * 4
 NomninalThrust = MaxTotalThrust/TWR
 MaxMass = NomninalThrust/9.81
 print(f'Theoretical Max Mass:{MaxMass:6.2f} kg')
-CurrentMass = (ChassisMass + (ESCMass + MotorAssemblyMass) * 4 + ArduinoMass + BatteryMass * BatteryNum )/1e3
+# CurrentMass = (ChassisMass + (ESCMass + MotorAssemblyMass) * 4 + ArduinoMass + BatteryMass * BatteryNum )/1e3
+CurrentMass = 1050/1e3
 MassMargin = MaxMass - CurrentMass
 print(f'Current Mass: {CurrentMass:6.2f} kg')
 print(f'Mass Margin: {MassMargin:6.2f} kg')
