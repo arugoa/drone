@@ -1,10 +1,11 @@
 #include "Drone.h"
-#include "ELRSController.h"
+// #include <Servo.h>
+// #include "ELRSController.h"
 Adafruit_BNO055 bno = Adafruit_BNO055(55);
 
-Drone::config cfg = {3, 5, 9, 6, bno};
+Drone::config cfg = {3, 5, 6, 9, bno};
 
-ELRSController controller;
+// ELRSController controller;
 
 Drone drone_;
 

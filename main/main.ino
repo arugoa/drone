@@ -1,8 +1,8 @@
 #include "main.h"
 
 void setup() {
-  // Serial.begin(9600);
-  controller.begin();
+  Serial.begin(9600);
+  // controller.begin();
   drone_.setup(cfg);
   prev_time = millis()/1000;
 
@@ -16,7 +16,7 @@ void loop() {
   unsigned long dt = millis()/1000 - prev_time;
   prev_time = millis()/1000;
   drone_.updateIMU();
-  controller.update();
+  // controller.update();
 
   if (Serial.available()) {
     String input = Serial.readStringUntil('\n');
@@ -50,16 +50,7 @@ void loop() {
   yaw = clamp(yaw, -180, 180);
   roll = clamp(roll, -180, 180);
 
-  // drone_.fly(throttle, pitch, yaw, roll, dt);
+  drone_.fly(throttle, pitch, yaw, roll, dt);
 
   delay(20);
-  // Serial.println("Loop Ran");
-  // Serial.print("p: ");
-  // Serial.print(pitch);
-
-  // Serial.print(", y: ");
-  // Serial.print(yaw);
-
-  // Serial.print(", r: ");
-  // Serial.println(roll);
 }
