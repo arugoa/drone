@@ -10,29 +10,26 @@ Drone::Drone()
     pitchPID = PID(pitchCfg);
     rollPID = PID(rollCfg);
 
-    PID::config flCfg(1.2*THROTTLE_SENS, 0, 0, ESC_MAX, 200);
-    PID::config frCfg(1.2*THROTTLE_SENS, 0, 0, ESC_MAX, 200);
-    PID::config blCfg(THROTTLE_SENS, 0, 0, ESC_MAX, 200);
-    PID::config brCfg(1.5*THROTTLE_SENS, 0, 0, ESC_MAX, 200);
+    OpenLoop::config flCfg(1145, 0.568*THROTTLE_SENS, 0.000104, ESC_MAX);
+    OpenLoop::config frCfg(1000, 1.2*THROTTLE_SENS, 0, ESC_MAX);
+    OpenLoop::config blCfg(1000, THROTTLE_SENS, 0, ESC_MAX);
+    OpenLoop::config brCfg(1140, 1.5*THROTTLE_SENS, 0, ESC_MAX);
 
-    flPID = PID(flCfg);
-    frPID = PID(frCfg);
-    blPID = PID(blCfg);
-    brPID = PID(brCfg);
-
-    flPID.feedForward = 1145;
-    frPID.feedForward = 1000;
-    blPID.feedForward = 1000;
-    brPID.feedForward = 1140;
+    flPID = OpenLoop(flCfg);
+    frPID = OpenLoop(frCfg);
+    blPID = OpenLoop(blCfg);
+    brPID = OpenLoop(brCfg);
 }
 
-void Drone::setup(config cfg)
+void Drone::setup(config cfg, bool no_imu)
 {
     front_left.attach(cfg.fl);
     front_right.attach(cfg.fr);
     back_left.attach(cfg.bl);
     back_right.attach(cfg.br);
-    imu = Adafruit_BNO055(cfg.imu);
+    if (!no_imu) {
+        imu = Adafruit_BNO055(cfg.imu);
+    }
 
     // ARM ESCs
     front_left.writeMicroseconds(ESC_MIN);
@@ -42,14 +39,16 @@ void Drone::setup(config cfg)
 
     delay(5000);
 
-    /* Initialize the sensor */
-    if(!imu.begin())
-    {
-        Serial.print("Oops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-        while(1);
+    if (!no_imu) {
+        /* Initialize the sensor */
+        if(!imu.begin())
+        {
+            Serial.print("Oops, no BNO055 detected ... Check your wiring or I2C ADDR!");
+            while(1);
+        }
+        delay(1000);
+        imu.setExtCrystalUse(true);
     }
-    delay(1000);
-    imu.setExtCrystalUse(true);
 }
 
 void Drone::updateIMU()
@@ -57,8 +56,16 @@ void Drone::updateIMU()
     imu.getEvent(&event);
 }
 
-void Drone::fly(float throttle, float pitch, float yaw, float roll, unsigned long dt)
+void Drone::fly(float throttle, float pitch, float yaw, float roll, unsigned long dt, bool no_imu)
 {
+    if (no_imu) {
+        int fl_micros = flPID.setSpeed(throttle);
+        Serial.println(fl_micros);
+        front_left.writeMicroseconds(fl_micros);
+
+        return;
+    }
+
     float deltapitch = pitchPID.calculate(pitch, curr_pitch(), dt);
     float deltayaw   = yawPID.calculate(  yaw,   curr_yaw(),   dt);
     float deltaroll  = rollPID.calculate( roll,  curr_roll(),  dt);
@@ -72,15 +79,10 @@ void Drone::fly(float throttle, float pitch, float yaw, float roll, unsigned lon
     // Serial.print(", r: ");
     // Serial.println(deltaroll);
 
-    int fl_micros = flPID.calculatePeriodic(throttle + deltapitch + deltayaw + deltaroll, dt);          // cw
-    int fr_micros = frPID.calculatePeriodic(throttle + deltapitch - deltayaw - deltaroll, dt);          // ccw
-    int bl_micros = blPID.calculatePeriodic(throttle - deltapitch - deltayaw + deltaroll, dt);          // ccw
-    int br_micros = brPID.calculatePeriodic(throttle - deltapitch + deltayaw - deltaroll, dt);          // cw
-
-    fl_micros = constrain(fl_micros, ESC_MIN, ESC_MAX);
-    fr_micros = constrain(fr_micros, ESC_MIN, ESC_MAX);
-    bl_micros = constrain(bl_micros, ESC_MIN, ESC_MAX);
-    br_micros = constrain(br_micros, ESC_MIN, ESC_MAX);
+    int fl_micros = flPID.setSpeed(throttle + deltapitch + deltayaw + deltaroll);          // cw
+    int fr_micros = frPID.setSpeed(throttle + deltapitch - deltayaw - deltaroll);          // ccw
+    int bl_micros = blPID.setSpeed(throttle - deltapitch - deltayaw + deltaroll);          // ccw
+    int br_micros = brPID.setSpeed(throttle - deltapitch + deltayaw - deltaroll);          // cw
 
     Serial.print("1: ");
     Serial.print(fl_micros);

@@ -3,7 +3,7 @@
 void setup() {
   Serial.begin(115200);
   controller.begin();
-  drone_.setup(cfg);
+  drone_.setup(cfg, true);
   prev_time = millis()/1000;
 
   pitch = drone_.curr_pitch();
@@ -28,7 +28,7 @@ void loop() {
     yaw = clamp(yaw, -180, 180);
     roll = clamp(roll, -180, 180);
 
-    drone_.fly(throttle, pitch, yaw, roll, dt);
+    drone_.fly(throttle, pitch, yaw, roll, dt, true);
   } 
   else if (controller.getLeftSwitch() == Switch::DOWN) {
     // Idk what to put here

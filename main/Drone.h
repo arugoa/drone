@@ -1,9 +1,9 @@
 #include "PID.h"
+#include "OpenLoop.h"
 #include <Servo.h>
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
-#include <utility/imumaths.h>
 
 #define ESC_MIN 1000
 #define ESC_MAX 2000
@@ -29,11 +29,11 @@ public:
 
     Drone();
 
-    void setup(config cfg);
+    void setup(config cfg, bool no_imu=false);
 
     void updateIMU();
 
-    void fly(float throttle, float pitch, float yaw, float roll, unsigned long dt);
+    void fly(float throttle, float pitch, float yaw, float roll, unsigned long dt, bool no_imu=false);
 
     void nofly();
 
@@ -56,8 +56,8 @@ private:
     PID yawPID;
     PID rollPID;
 
-    PID flPID;
-    PID frPID;
-    PID blPID;
-    PID brPID;
+    OpenLoop flPID;
+    OpenLoop frPID;
+    OpenLoop blPID;
+    OpenLoop brPID;
 };
