@@ -11,9 +11,8 @@
 #define clamp(amt, low, high)                                              \
   ((amt) < (low) ? (amt+2*high) : ((amt) > (high) ? (amt-2*high) : (amt)))
 
-// Find out what this is supposed to be
 constexpr float MAX_THROTTLE = 2000;
-constexpr float THROTTLE_SENS = 10;
+constexpr float THROTTLE_SENS = 6;  // Set based on the lowest max thrust of ur motors
 
 class Drone
 {
@@ -34,6 +33,8 @@ public:
     void updateIMU();
 
     void fly(float throttle, float pitch, float yaw, float roll, unsigned long dt, bool no_imu=false);
+
+    void thrust(float throttle);
 
     void nofly();
 

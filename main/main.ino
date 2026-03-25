@@ -2,6 +2,8 @@
 
 void setup() {
   Serial.begin(115200);
+  Serial.println("Setup complete!");
+  
   controller.begin();
   drone_.setup(cfg, true);
   prev_time = millis()/1000;
@@ -32,6 +34,8 @@ void loop() {
   } 
   else if (controller.getLeftSwitch() == Switch::DOWN) {
     // Idk what to put here
+    throttle = controller.getThrottle()*100;
+    drone_.thrust(throttle);
   }
   else {
     throttle = 0;

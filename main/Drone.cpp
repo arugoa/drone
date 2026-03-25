@@ -10,10 +10,10 @@ Drone::Drone()
     pitchPID = PID(pitchCfg);
     rollPID = PID(rollCfg);
 
-    OpenLoop::config flCfg(1145, 0.568*THROTTLE_SENS, 0.000104, ESC_MAX);
-    OpenLoop::config frCfg(1000, 1.2*THROTTLE_SENS, 0, ESC_MAX);
-    OpenLoop::config blCfg(1000, THROTTLE_SENS, 0, ESC_MAX);
-    OpenLoop::config brCfg(1140, 1.5*THROTTLE_SENS, 0, ESC_MAX);
+    OpenLoop::config flCfg(1140, 0.867*THROTTLE_SENS, 2.28*10e-4, ESC_MAX);
+    OpenLoop::config frCfg(1030, 0.767*THROTTLE_SENS, 6.26*10e-5, ESC_MAX);
+    OpenLoop::config blCfg(1030, 0.629*THROTTLE_SENS, 2.75*10e-5, ESC_MAX);
+    OpenLoop::config brCfg(1170, 0.807*THROTTLE_SENS, -1.94*10e-4, ESC_MAX);
 
     flPID = OpenLoop(flCfg);
     frPID = OpenLoop(frCfg);
@@ -56,33 +56,12 @@ void Drone::updateIMU()
     imu.getEvent(&event);
 }
 
-void Drone::fly(float throttle, float pitch, float yaw, float roll, unsigned long dt, bool no_imu)
+void Drone::thrust(float throttle)
 {
-    if (no_imu) {
-        int fl_micros = flPID.setSpeed(throttle);
-        Serial.println(fl_micros);
-        front_left.writeMicroseconds(fl_micros);
-
-        return;
-    }
-
-    float deltapitch = pitchPID.calculate(pitch, curr_pitch(), dt);
-    float deltayaw   = yawPID.calculate(  yaw,   curr_yaw(),   dt);
-    float deltaroll  = rollPID.calculate( roll,  curr_roll(),  dt);
-
-    // Serial.print("t: ");
-    // Serial.print(throttle);
-    // Serial.print("p: ");
-    // Serial.print(deltapitch);
-    // Serial.print(", y: ");
-    // Serial.print(deltayaw);
-    // Serial.print(", r: ");
-    // Serial.println(deltaroll);
-
-    int fl_micros = flPID.setSpeed(throttle + deltapitch + deltayaw + deltaroll);          // cw
-    int fr_micros = frPID.setSpeed(throttle + deltapitch - deltayaw - deltaroll);          // ccw
-    int bl_micros = blPID.setSpeed(throttle - deltapitch - deltayaw + deltaroll);          // ccw
-    int br_micros = brPID.setSpeed(throttle - deltapitch + deltayaw - deltaroll);          // cw
+    int fl_micros = flPID.setSpeed(throttle);          // cw
+    int fr_micros = frPID.setSpeed(throttle);          // ccw
+    int bl_micros = blPID.setSpeed(throttle);          // ccw
+    int br_micros = brPID.setSpeed(throttle);          // cw
 
     Serial.print("1: ");
     Serial.print(fl_micros);
@@ -97,6 +76,48 @@ void Drone::fly(float throttle, float pitch, float yaw, float roll, unsigned lon
     front_right.writeMicroseconds(fr_micros);
     back_left.writeMicroseconds(bl_micros);
     back_right.writeMicroseconds(br_micros);
+}
+
+void Drone::fly(float throttle, float pitch, float yaw, float roll, unsigned long dt, bool no_imu)
+{
+    if (no_imu) {
+        int fl_micros = flPID.setSpeed(throttle);
+        Serial.println(fl_micros);
+        front_left.writeMicroseconds(fl_micros);
+    }
+    else {
+        float deltapitch = pitchPID.calculate(pitch, curr_pitch(), dt);
+        float deltayaw   = yawPID.calculate(  yaw,   curr_yaw(),   dt);
+        float deltaroll  = rollPID.calculate( roll,  curr_roll(),  dt);
+
+        // Serial.print("t: ");
+        // Serial.print(throttle);
+        // Serial.print("p: ");
+        // Serial.print(deltapitch);
+        // Serial.print(", y: ");
+        // Serial.print(deltayaw);
+        // Serial.print(", r: ");
+        // Serial.println(deltaroll);
+
+        int fl_micros = flPID.setSpeed(throttle + deltapitch + deltayaw + deltaroll);          // cw
+        int fr_micros = frPID.setSpeed(throttle + deltapitch - deltayaw - deltaroll);          // ccw
+        int bl_micros = blPID.setSpeed(throttle - deltapitch - deltayaw + deltaroll);          // ccw
+        int br_micros = brPID.setSpeed(throttle - deltapitch + deltayaw - deltaroll);          // cw
+
+        Serial.print("1: ");
+        Serial.print(fl_micros);
+        Serial.print(" 2: ");
+        Serial.print(fr_micros);
+        Serial.print(" 3: ");
+        Serial.print(bl_micros);
+        Serial.print(" 4: ");
+        Serial.println(br_micros);
+
+        front_left.writeMicroseconds(fl_micros);
+        front_right.writeMicroseconds(fr_micros);
+        back_left.writeMicroseconds(bl_micros);
+        back_right.writeMicroseconds(br_micros);
+    }
 }
 
 void Drone::nofly()
